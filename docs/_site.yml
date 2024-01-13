@@ -1,0 +1,29 @@
+name: "DCIEM dive planning"
+output_dir: "_site"
+navbar:
+  title: "DCIEM"
+  type: default
+  right:
+    - text: "DCIEM R package"
+      href: "index.html"
+      menu:
+        - text: "install package"
+          href: "download.html"
+        - text: "Changelog"
+          href: "changelog.html"
+        - text: "R Functions"
+          href: "functions.html"
+        - text: "DCIEM tables"
+          href: "dciemtables.html"
+    - text: "DCIEM App"
+      href: "DCIEM_app.html"
+output:
+  html_document:
+    toc: FALSE
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+      float_side: "right"
+    code_folding: "hide"
+    css: "DCIEM.css"
+    fig_caption: true

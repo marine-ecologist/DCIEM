@@ -1,0 +1,14 @@
+---
+title: "DCIEM"
+output: html_document
+date: "2024-01-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### DCIEM tables
+
+Click below for the full DCIEM tables and [here](https://www.divegearexpress.com/amfile/file/download/file/143/product/8927/) for the full DCIEM manual.
+
+<a href="images/DCIEM.jpg"><img src="images/DCIEM.jpg"  target="_self"/></a>

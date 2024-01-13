@@ -1,0 +1,20 @@
+---
+title: "DCIEM app notes"
+output: html_document 
+date: "2024-01-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The DCIEM app is written in `r` and `shiny`. To make the dive log more user-friendly, it uses a series of functions that make dynamic entry of dates more user friendly.
+
+
+-   Checks that i) TimeOut is after TimeIn, and ii) TimeIn is after the previous dive. If both are correct then "Add Entry" can be selected otherwise cannot be clicked (stops accidental entry of negative times ).
+
+-   `AirOut` creates a red warning if \<30 bar and an orange warning if \<50 bar
+
+-   Added `shinyjs` to disable submit button if `Time Out` \< `Time In` or `TimeIn` \< `TimeOut` from previous dive to avoid submitting invalid dives\\
+
+-   `TimeOut` now updates when `TimeIn` is selected to make time entry easier

@@ -1,0 +1,21 @@
+---
+title: "Download current version"
+output: html_document
+date: "2024-01-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Installation
+DCIEM can be installed as a package from GitHub via remotes:
+
+```{r eval=FALSE, include=TRUE}
+
+#install.packages("remotes")
+remotes::install_github("marine-ecologist/coralseed")
+
+
+```
