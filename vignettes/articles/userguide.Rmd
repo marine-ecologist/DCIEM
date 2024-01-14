@@ -1,8 +1,0 @@
----
-title: "User guide and change log"
----
-
-## User guide
-
--   `RG2` is the Repetitive Group except increases each dive following the conservative DCIEM profiles.
--   
