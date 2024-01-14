@@ -2,7 +2,28 @@
 title: ""
 ---
 
+<iframe src="https://marine-ecologist.shinyapps.io/dciem/" height="1000px" width="100%" style="border:0;" scrolling="yes" title>
 
-  
-<iframe src="https://marine-ecologist.shinyapps.io/dciem/" height="1000px" width="100%" style="border:0;" scrolling="yes" title=""></iframe>
-  
+</iframe>
+
+1.  Enter the Date, Time In, Time Out, Bottom Time, MaxDepth, AirIn, and AirOut in the first box, then add entry.
+
+2.  The dive planner will calculate Effective Bottom Time, Repetitive Group, Surface Interval, and Repetitve Factors from all dive entries.
+
+#### Notes
+
+**BT** = Bottom Time (i.e. start of descent to start of ascent)
+
+EBT = Effective Bottom Time (Bottom time [BT] \* Repetitive Factor [RF])
+
+**MaxDepth** = maximum depth in metres (round upwards)
+
+RG = Repetitive Group
+
+RG2 = conservative Repetitive Group
+
+SI = Surface Interval (hh:mm)
+
+RF = Repetitive Factor
+
+-   Dives with \<15 minutes SI need to be manually combined (to be revised in a future version)

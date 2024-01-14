@@ -649,6 +649,89 @@ ui <- fluidPage(
 )
 
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+ui <- fluidPage(
+  useShinyjs(),  # Initialize shinyjs
+  tags$head(
+    tags$script(HTML("
+      $(document).on('shiny:connected', function(event) {
+        $('#date').attr('readonly', true);
+      });
+    ")),
+    tags$style(HTML("
+      .border-right {
+        border-right: 1px solid #ddd;
+      }
+      .border-left {
+        border-left: 1px solid #ddd;
+      }
+      body, .container-fluid {
+        min-width: 900px;
+        max-width: 900px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .input-box {
+        border: 1px solid #ddd;
+        padding: 6px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+      }
+      .input-box .col-sm-2, .input-box .col-sm-1 {
+        min-width: 100px;
+        max-width: 120px;
+      }
+    "))
+  ),
+
+  titlePanel(
+      title = span(img(src = "./dciemhex.png"), " DCIEM")
+    ),
+
+
+  div(class = "input-box",
+      fluidRow(
+        column(2, dateInput("date", "Date")),
+        column(2, selectInput("timeIn", "Time In",
+                              choices = {
+                                full_sequence <- format(seq(as.POSIXct("00:00", format="%H:%M"),
+                                                            as.POSIXct("23:59", format="%H:%M"),
+                                                            by="min"),
+                                                        "%H:%M")
+                                start_index <- match("07:00", full_sequence)
+                                c(full_sequence[start_index:length(full_sequence)],
+                                  full_sequence[1:(start_index-1)])
+                              })),
+        column(2, selectInput("timeOut", "Time Out",
+                              choices = {
+                                full_sequence <- format(seq(as.POSIXct("00:00", format="%H:%M"),
+                                                            as.POSIXct("23:59", format="%H:%M"),
+                                                            by="min"),
+                                                        "%H:%M")
+                                start_index <- match("07:00", full_sequence)
+                                c(full_sequence[start_index:length(full_sequence)],
+                                  full_sequence[1:(start_index-1)])
+                              })),
+        # column(2, selectInput("timeIn", "Time In", choices = format(seq(as.POSIXct("00:00", format="%H:%M"), as.POSIXct("23:59", format="%H:%M"), by="min"), "%H:%M"))),
+        # column(2, selectInput("timeOut", "Time Out", choices = format(seq(as.POSIXct("00:00", format="%H:%M"), as.POSIXct("23:59", format="%H:%M"), by="min"), "%H:%M"))),
+        column(1, numericInput("EBT", "EBT", value = 0 )),
+        column(1, numericInput("MaxDepth", "MaxDepth", value = 0 )),
+        column(1, numericInput("airIn", "Air in", value = 200) ),
+        column(1, numericInput("airOut", "Air Out", value = 100 )),
+
+      ),
+      fluidRow(
+        column(10,  actionButton("addBtn", "Add Entry", class = "btn-action"))
+      )
+  ),
+  div(class = "output-box",
+      DTOutput("table")
+  )
+)
+
+#-----------------------------------------------------------------------------
 server <- function(input, output, session) {
 
     # function to increase RG letters
@@ -666,9 +749,9 @@ server <- function(input, output, session) {
                                          AirIn = numeric(),
                                          AirOut = numeric(),
                                          MaxDepth = numeric(),
-                                         BT = numeric(),
                                          EBT = numeric(),
                                          RG = numeric(),
+                                         BT = numeric(),
                                          RG2 = character(),
                                          SI = character(),
                                          RF = numeric(),
@@ -733,7 +816,7 @@ server <- function(input, output, session) {
 
   })
 
-    observe({ # Observe changes and enable/disable the button
+  observe({ # Observe changes and enable/disable the button
     if (enableButton()) {
       shinyjs::enable("addBtn")
     } else {
@@ -741,7 +824,7 @@ server <- function(input, output, session) {
     }
   })
 
-    #@@@@@@@ Initiate "Add Entry" button and add rows
+  #@@@@@@@ Initiate "Add Entry" button and add rows
   observeEvent(input$addBtn, {
 
 
@@ -815,23 +898,22 @@ server <- function(input, output, session) {
     # Create new entry
     newEntry <- data.frame(Date = input$date,
                            AirIn = input$airIn,
-                           AirOut = input$airOut,
                            TimeIn = format(dateTimeIn, "%H:%M"),
                            TimeOut = format(ymd_hm(paste(input$date, input$timeOut)), "%H:%M"),
                            BT = Timeval,
                            MaxDepth = input$MaxDepth,
                            EBT = input$EBT,
-                           RG = get_RG(input$MaxDepth, input$EBT),
+                           RG = DCIEM::get_RG(input$MaxDepth, input$EBT),
                            RG2 = RG2val,
                            SI = SIval,
-                           RF = get_RF(get_RG(input$MaxDepth, input$EBT), minutes2)
-                           )
+                           RF = DCIEM::get_RF(get_RG(input$MaxDepth, input$EBT), minutes2)
+    )
 
 
     # Add new entry to data
     rv$data <- rbind(rv$data, newEntry)
 
-   })
+  })
 
   #@@@@@@@ render DT
 
@@ -858,23 +940,22 @@ server <- function(input, output, session) {
   })
 
   #@@@@@@@ Render the data table with a delete button column
-    output$table <- renderDT({
-      rv$data %>%
-        mutate(Delete = sprintf('<button onclick="Shiny.onInputChange(\'delete_row\', %s)" class="btn btn-danger btn-xs">Delete</button>', row_number())) %>%
-        datatable(escape = FALSE, options = list(pageLength = 100, searching = FALSE),
-                  editable = list(target = 'cell', disable = list(columns = c(8))))
-    })
+  output$table <- renderDT({
+    rv$data %>%
+      mutate(Delete = sprintf('<button onclick="Shiny.onInputChange(\'delete_row\', %s)" class="btn btn-danger btn-xs">Delete</button>', row_number())) %>%
+      datatable(escape = FALSE, options = list(pageLength = 100, searching = FALSE),
+                editable = list(target = 'cell', disable = list(columns = c(8))))
+  })
 
-    # Observe delete button clicks
-    observeEvent(input$delete_row, {
-      req(input$delete_row)  # Ensure there's a value to work with
-      rv$data <- rv$data[-input$delete_row, ]  # Remove the row
+  # Observe delete button clicks
+  observeEvent(input$delete_row, {
+    req(input$delete_row)  # Ensure there's a value to work with
+    rv$data <- rv$data[-input$delete_row, ]  # Remove the row
 
-      # Recalculate dependent values (e.g., RG2) for all rows
-      rv$data$RG2 <- c(rv$data$RG[1], sapply(rv$data$RG[-length(rv$data$RG)], increment_letter))
-    })
+    # Recalculate dependent values (e.g., RG2) for all rows
+    rv$data$RG2 <- c(rv$data$RG[1], sapply(rv$data$RG[-length(rv$data$RG)], increment_letter))
+  })
 
 }
 
 shinyApp(ui, server)
-
