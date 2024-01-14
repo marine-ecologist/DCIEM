@@ -12,7 +12,7 @@
 
 <meta name="date" content="2024-01-13" />
 
-<title>Download current version</title>
+<title>DCIEM app notes</title>
 
 <script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -292,18 +292,29 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Download current version</h1>
+<h1 class="title toc-ignore">DCIEM app notes</h1>
 <h4 class="date">2024-01-13</h4>
 
 </div>
 
 
-<div id="installation" class="section level1">
-<h1>Installation</h1>
-<p>DCIEM can be installed as a package from GitHub via remotes:</p>
-<pre class="r"><code>#install.packages(&quot;remotes&quot;)
-remotes::install_github(&quot;marine-ecologist/coralseed&quot;)</code></pre>
-</div>
+<p>The DCIEM app is written in <code>r</code> and <code>shiny</code>. To
+make the dive log more user-friendly, it uses a series of functions that
+make dynamic entry of dates more user friendly.</p>
+<ul>
+<li><p>Checks that i) TimeOut is after TimeIn, and ii) TimeIn is after
+the previous dive. If both are correct then “Add Entry” can be selected
+otherwise cannot be clicked (stops accidental entry of negative times
+).</p></li>
+<li><p><code>AirOut</code> creates a red warning if &lt;30 bar and an
+orange warning if &lt;50 bar</p></li>
+<li><p>Added <code>shinyjs</code> to disable submit button if
+<code>Time Out</code> &lt; <code>Time In</code> or <code>TimeIn</code>
+&lt; <code>TimeOut</code> from previous dive to avoid submitting invalid
+dives\</p></li>
+<li><p><code>TimeOut</code> now updates when <code>TimeIn</code> is
+selected to make time entry easier</p></li>
+</ul>
 
 
 

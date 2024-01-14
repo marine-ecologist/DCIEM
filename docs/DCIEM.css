@@ -1,4 +1,6 @@
-
+div.main-container {
+  max-width: 1150px !important;
+}
 h1.title {
   font-size: 22px;
 }
