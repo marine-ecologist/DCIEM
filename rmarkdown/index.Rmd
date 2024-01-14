@@ -1,13 +1,12 @@
 ---
 title: "DCIEM"
 output: html_document 
-date: "2024-01-13"
+date: "2023-12-22"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-#### "author: George Roff"
 
 <img src="images/dciemhex.png" style="float: right;" width="181"/>
 
@@ -28,7 +27,9 @@ remotes::install_github("marine-ecologist/dciem")
 
 
 ```
+
 To run the app direct without installing the package, use `runGitHub`:
+
 ```{r eval=FALSE, include=TRUE, class.source = "fold-show"}
 
 runGitHub("dciem", "marine-ecologist")
@@ -38,4 +39,8 @@ runGitHub("dciem", "marine-ecologist")
 
 The package and functions are currently in development and need further testing.
 
-Do NOT rely on this package or any automated calculator for planning dives. Please feel free to email corrections and improved/suggestions to george.roff\@csiro.au
+Do NOT rely on this package or any automated calculator for planning dives. Please feel free to email corrections and improved/suggestions to
+
+### Contact:
+
+George Roff ([george.roff\@csiro.au](%22mailto:george.roff@csiro.au%22))
