@@ -10,7 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The DCIEM app is written in `r` and `shiny`. To make the dive log more user-friendly, it uses a series of functions that make dynamic entry of dates more user friendly.
 
-
 -   Checks that i) TimeOut is after TimeIn, and ii) TimeIn is after the previous dive. If both are correct then "Add Entry" can be selected otherwise cannot be clicked (stops accidental entry of negative times ).
 
 -   `AirOut` creates a red warning if \<30 bar and an orange warning if \<50 bar
@@ -18,3 +17,11 @@ The DCIEM app is written in `r` and `shiny`. To make the dive log more user-frie
 -   Added `shinyjs` to disable submit button if `Time Out` \< `Time In` or `TimeIn` \< `TimeOut` from previous dive to avoid submitting invalid dives\\
 
 -   `TimeOut` now updates when `TimeIn` is selected to make time entry easier
+
+-    `RG2` is a version of `RG` where repetitive dives in a single day are incremental e.g. first - second dive can be A - B, but if the third dive is RG B-A or B-B then RG2 will always increase A-C unless SI=1.0 at the time of the next dive
+
+#### Future updates
+
+Exploring the use of [`shinyStore`](https://github.com/trestletech/shinyStore) in storing data sessions in the users browser to retain local information and act as a server side online dive-log:
+
+`The shinyStore package enables Shiny application developers to take advantage of HTML5 Local Storage to store persistent, synchronized data in the user's browser`

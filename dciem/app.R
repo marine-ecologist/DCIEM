@@ -806,7 +806,7 @@ server <- function(input, output, session) {
       Timeval <- input$EBT
     }
 
-    #--------calculate Repetitive Group (RG) ---------
+    #--------calculate Incremental Repetitive Group (RG2) ---------
     RG2val <- if (nrow(rv$data) >= 1) {
       # For the first row, increment based on RG
       if (nrow(rv$data) == 1) {
@@ -865,6 +865,7 @@ server <- function(input, output, session) {
       )
   })
 
+  #-------- Recalculate for deleted rows ---------
   observeEvent(input$delete_row, { # Observe delete button clicks
     req(input$delete_row) # Ensure there's a value to work with
     rv$data <- rv$data[-input$delete_row, ] # Remove the row
@@ -874,7 +875,6 @@ server <- function(input, output, session) {
   })
 
   #-------- Add downloadHandler to save the data as CSV or Excel ---------
-
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("data-", Sys.Date(), ".csv", sep="")

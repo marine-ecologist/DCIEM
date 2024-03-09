@@ -17,7 +17,18 @@ Working:
 -   update EBT based on TimeOut (check `Handle case where TimeOut is on the next day`)
 -   only allow entry where TimeOut is after TimeIn
 -   Initiate "Add Entry" button and add rows
+-   Update TimeIn to be the same as the last row's TimeOut
 
 Not working:
 
--   Update TimeIn to be the same as the last row's TimeOut
+-   \`RG2\` is a version of \`RG\` where repetitive dives in a single day are incremental e.g. first - second dive can be A - B, but if the third dive is RG B-A or B-B then RG2 will always increase A-C unless SI=1.0 at the time of the next dive. Still need to code this into RG2 (can't think of a time this applies to a single RG dive in one day)
+
+-   For example:
+
+    ![](images/Screenshot 2024-03-10 at 5.39.07 am.png)
+
+-    \^\^\^ this is incorrect as RG2 should reset when SI = 1
+
+-   similarly should only increase IF a new dive is added
+
+-   Needs fixing for accomodating multiday dive profiles and turning into a true "log"
