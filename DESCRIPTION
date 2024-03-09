@@ -1,6 +1,6 @@
 Package: DCIEM
 Title: Functions to calculate DCIEM dive tables and log dives
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("George", "Roff", , "george.roff@csiro.au", role = c("aut", "cre"))
 Description: Calculates DCIEM tables and provides a Shiny interface to logging dives.
