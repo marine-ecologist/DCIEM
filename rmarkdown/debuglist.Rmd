@@ -1,0 +1,23 @@
+---
+title: "debug list"
+author: "George Roff"
+date: "2024-02-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 
+
+Working:
+
+-   update TimeOut based on TimeIn
+-   update EBT based on TimeOut (check `Handle case where TimeOut is on the next day`)
+-   only allow entry where TimeOut is after TimeIn
+-   Initiate "Add Entry" button and add rows
+
+Not working:
+
+-   Update TimeIn to be the same as the last row's TimeOut
