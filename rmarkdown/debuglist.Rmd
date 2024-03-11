@@ -25,9 +25,9 @@ Not working:
 
 -   For example:
 
-    ![](images/Screenshot 2024-03-10 at 5.39.07 am.png)
+    ![](images/Screenshot%202024-03-10%20at%205.39.07%20am.png)
 
--    \^\^\^ this is incorrect as RG2 should reset when SI = 1
+-   \^\^\^ this is incorrect as RG2 should reset when SI = 1
 
 -   similarly should only increase IF a new dive is added
 

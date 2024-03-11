@@ -1,13 +1,12 @@
-name: dciem
-title: dciem
+name: dciem_v0_9001
+title: dciem_v0_9001
 username: o7s3wi-george-roff
 account: o7s3wi-george-roff
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 10921999
+appId: 11448426
 bundleId:
-url: https://marine-ecologist.shinyapps.io/dciem/
+url: https://marine-ecologist.shinyapps.io/dciem_v0_9001/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: dciemhex.png|www/dciemhex.png

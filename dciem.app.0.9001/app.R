@@ -597,39 +597,56 @@ ui <- fluidPage(
       });
     ")),
     tags$style(HTML("
-      .border-right {
-        border-right: 1px solid #ddd;
-      }
-      .border-left {
-        border-left: 1px solid #ddd;
-      }
-      body, .container-fluid {
-        min-width: 1000px;
-        max-width: 1000px;
-        margin-right: auto;
-        margin-left: auto;
-      }
-      .input-box {
-        border: 1px solid #ddd;
-        padding: 6px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        background-color: #f9f9f9;
-      }
-      .input-box .col-sm-2, .input-box .col-sm-1 {
-        min-width: 100px;
-        max-width: 120px;
-      }
-    "))
+    .border-right {
+      border-right: 1px solid #ddd;
+    }
+    .border-left {
+      border-left: 1px solid #ddd;
+    }
+    body, .container-fluid {
+      min-width: 1000px;
+      max-width: 1000px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    .input-box {
+      border: 1px solid #ddd;
+      padding: 6px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+    }
+    .input-box .col-sm-2, .input-box .col-sm-1 {
+      min-width: 100px;
+      max-width: 120px;
+    }
+    .btn-action {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      color: #fff;
+      background-color: #337ab7;
+      border-color: #2e6da4;
+    }
+    .dynamic_SI_input {
+      margin-left: 120px;
+      color: darkred !important;
+    }
+     .dynamic_RF_input {
+      color: darkred !important;
+    }
+
+
+  "))
   ),
 
   titlePanel(
-    title = span(img(src = "www/dciemhex.png"), " DCIEM")
+    title = "DCIEM"
   ),
 
 
   div(class = "input-box",
-      fluidRow(
+       fluidRow(
         column(2, dateInput("date", "Date")),
         column(2, selectInput("timeIn", "Time In",
                               choices = {
@@ -654,14 +671,21 @@ ui <- fluidPage(
         # column(2, selectInput("timeIn", "Time In", choices = format(seq(as.POSIXct("00:00", format="%H:%M"), as.POSIXct("23:59", format="%H:%M"), by="min"), "%H:%M"))),
         # column(2, selectInput("timeOut", "Time Out", choices = format(seq(as.POSIXct("00:00", format="%H:%M"), as.POSIXct("23:59", format="%H:%M"), by="min"), "%H:%M"))),
         column(1, numericInput("EBT", "EBT", value = 0 )),
-        column(1, numericInput("MaxDepth", "MaxDepth", value = 0 )),
+        column(1, numericInput("MaxDepth", "MaxDepth", value = 5)),
         column(1, numericInput("airIn", "Air in", value = 200) ),
         column(1, numericInput("airOut", "Air Out", value = 100 )),
+        column(1,   div(style="text-align: center;",
+                        tags$h1(" ", style="color: transparent;"),
+                          actionButton("addBtn", "Add Entry", class = "btn-action"))
+                        )
 
       ),
       fluidRow(
-        column(10,  actionButton("addBtn", "Add Entry", class = "btn-action"))
-      )
+        column(2, offset = 2),
+        column(2, textInput("dynamic_SI", "SI since", value = "00:00"), class = "dynamic_SI_input"),
+        column(1, textInput("RF_in", "RF in", value = 1), class = "dynamic_RF_input"),
+      ),
+
   ),
   div(class = "output-box",
       DTOutput("table")
@@ -686,6 +710,8 @@ server <- function(input, output, session) {
 
   rv <- reactiveValues(data = data.frame(
     Date = as.Date(character()),
+    RF_in = numeric(),
+    dynamic_SI = numeric(),
     TimeIn = character(),
     TimeOut = character(),
     AirIn = numeric(),
@@ -696,7 +722,7 @@ server <- function(input, output, session) {
     BT = numeric(),
     RG2 = character(),
     SI = character(),
-    RF = numeric(),
+    RF_out = numeric(),
     stringsAsFactors = FALSE
   ))
 
@@ -710,10 +736,10 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$timeOut,
-    {
-      values$timeOutChanged <- TRUE
-    },
-    ignoreInit = TRUE
+               {
+                 values$timeOutChanged <- TRUE
+               },
+               ignoreInit = TRUE
   )
 
   #------------------ update timeOut based on timeIn ------------------------------------------
@@ -800,13 +826,52 @@ server <- function(input, output, session) {
 
     #--------calculate Bottom Time (BT) ---------
     if (nrow(rv$data) > 0) {
-      lastRF <- rv$data$RF[nrow(rv$data)]
+      lastRF <- rv$data$RF_out[nrow(rv$data)]
       Timeval <- ceiling(lastRF * input$EBT) # NOTE always rounds up
     } else {
       Timeval <- input$EBT
     }
 
     #--------calculate Incremental Repetitive Group (RG2) ---------
+
+    # if (nrow(rv$data) >= 1) {
+    #   if (nrow(rv$data) == 1) {
+    #     # For the first row, increment RG directly
+    #     rv$data$RG2[1] <- increment_letter(rv$data$RG[1])
+    #   } else {
+    #     # Get the index for the last row
+    #     lastRowIdx <- nrow(rv$data)
+    #     # Fetch the SI value for the last row
+    #     lastSI <- as.numeric(rv$data$SI[lastRowIdx]) # Ensure SI is numeric
+    #
+    #     if (lastSI > 1.0) {
+    #       # If SI > 1.0, increment RG2 based on the last RG2 value
+    #       rv$data$RG2[lastRowIdx] <- increment_letter(rv$data$RG2[lastRowIdx - 1])
+    #     } else {
+    #       # If SI <= 1.0, reset RG2 to ""
+    #       rv$data$RG2[lastRowIdx] <- ""
+    #     }
+    #   }
+    # } else {
+    #   # If no rows exist, ensure the default RG2 value is set to ""
+    #   rv$data$RG2[1] <- ""
+    # }
+
+    # update RF_in based on RF_out
+    observe({
+      # Check if there are entries in the data
+      if(nrow(rv$data) >= 1) {
+        # Update RF.in to the last value of RF_out
+        lastRFoutValue <- tail(rv$data$RF_out, 1)
+        updateNumericInput(session, "RF_in", value = lastRFoutValue)
+      } else {
+        # Reset RF.in to default value if there are no rows
+        updateNumericInput(session, "RF_in", value = 1)
+      }
+    })
+
+    ##############
+
     RG2val <- if (nrow(rv$data) >= 1) {
       # For the first row, increment based on RG
       if (nrow(rv$data) == 1) {
@@ -823,16 +888,17 @@ server <- function(input, output, session) {
     newEntry <- data.frame(
       Date = input$date,
       AirIn = input$airIn,
+      RF_in = input$RF_in,
       TimeIn = format(dateTimeIn, "%H:%M"),
       TimeOut = format(ymd_hm(paste(input$date, input$timeOut)), "%H:%M"),
       BT = Timeval,
       MaxDepth = input$MaxDepth,
       AirOut = input$airOut,
       EBT = input$EBT,
-      RG = DCIEM::get_RG(input$MaxDepth, input$EBT),
+      RG = get_RG(input$MaxDepth, input$EBT),
       RG2 = RG2val,
       SI = SIval,
-      RF = DCIEM::get_RF(get_RG(input$MaxDepth, input$EBT), minutes2)
+      RF_out = get_RF(get_RG(input$MaxDepth, input$EBT), minutes2)
     )
 
     rv$data <- rbind(rv$data, newEntry) # Add new entry to data
@@ -861,7 +927,7 @@ server <- function(input, output, session) {
         editable = list(target = "cell", disable = list(columns = c(8)))
       ) |>
       formatStyle("AirOut",
-        backgroundColor = styleInterval(c(30, 50), c("red", "orange", "white"))
+                  backgroundColor = styleInterval(c(30, 50), c("red", "orange", "white"))
       )
   })
 
@@ -873,6 +939,74 @@ server <- function(input, output, session) {
     # Recalculate dependent values (e.g., RG2) for all rows
     rv$data$RG2 <- c(rv$data$RG[1], sapply(rv$data$RG[-length(rv$data$RG)], increment_letter))
   })
+
+  #-------- Calculate dynamic SI ---------
+  observe({
+    if(nrow(rv$data) > 0) {
+    # Get the last dive's TimeOut
+    lastDiveTimeOut <- tail(rv$data$TimeOut, 1)
+    lastDiveDate <- tail(rv$data$Date, 1)
+    lastDiveDateTime <- as.POSIXct(paste(lastDiveDate, lastDiveTimeOut), format = "%Y-%m-%d %H:%M")
+
+    # Get the current TimeIn and Date
+    currentDateTimeIn <- as.POSIXct(paste(input$date, input$timeIn), format = "%Y-%m-%d %H:%M")
+
+    # Calculate the difference in minutes
+    diffMinutes <- as.numeric(difftime(currentDateTimeIn, lastDiveDateTime, units = "mins"))
+
+    # Only update if the difference is positive; negative difference indicates an error
+    if(diffMinutes >= 0) {
+      # Calculate hours and minutes
+      hours <- diffMinutes %/% 60
+      minutes <- diffMinutes %% 60
+
+      # Update dynamic_SI with the calculated interval
+      updateTextInput(session, "dynamic_SI", value = sprintf("%02d:%02d", hours, minutes))
+    }
+  } else {
+    # For the first dive, set Dynamic SI to a default or indicative value
+    updateTextInput(session, "dynamic_SI", value = "N/A")
+  }
+  })
+
+  #-------- Add dynamic RF handler based on previous RG  ---------
+  #get_RF <- function(RG = NULL, surfaceinterval = NULL)
+  observe({
+    if (nrow(rv$data) >= 1) {
+      # Get RG from the last row's RG2 value unless first row then get RG
+      lastRG <- ifelse(nrow(rv$data) ==1,  tail(rv$data$RG, 1), tail(rv$data$RG2, 1))
+
+      # Check if dynamic_SI is "N/A" and handle accordingly
+      if (input$dynamic_SI != "N/A") {
+        # Extract surface interval from dynamic_SI input since it's not "N/A"
+        surface_interval <- strsplit(input$dynamic_SI, ":")[[1]]
+        if (length(surface_interval) == 2) {  # Check if the split was successful
+          hours <- as.numeric(surface_interval[1])
+          minutes <- as.numeric(surface_interval[2])
+          total_minutes <- hours * 60 + minutes
+          if(total_minutes==0){
+            RF=NA
+          } else{
+            # Calculate RF based on RG and surface interval
+            RF <- get_RF(lastRG, total_minutes)
+          }
+          # Update RF_in input field
+          updateTextInput(session, "RF_in", value = as.character(RF))
+        } else {
+          # Handle unexpected format of dynamic_SI input
+          print("Unexpected format of dynamic_SI")
+        }
+      } else {
+        # Here handle the case when dynamic_SI is "N/A", potentially setting a default RF value
+        # Since dynamic_SI is "N/A", you might want to use a default or previously calculated RF value
+        updateTextInput(session, "RF_in", value = "1")  # Example: resetting to default
+      }
+    } else {
+      # If no rows, set RF_in to 1
+      updateTextInput(session, "RF_in", value = "1")
+    }
+  })
+
 
   #-------- Add downloadHandler to save the data as CSV or Excel ---------
   output$downloadData <- downloadHandler(
