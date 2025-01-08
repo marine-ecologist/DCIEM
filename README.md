@@ -1,6 +1,7 @@
 # DCIEM
-
-<img src="https://marine-ecologist.github.io/DCIEM/images/dciemhex.png" style="float: right;" width="181"/>
+<p align="right">
+  <img src="https://marine-ecologist.github.io/DCIEM/images/dciemhex.png" style="float: right;" width="181"/>
+</p>
 
 `DCIEM` is a "development" package that functions as a diveplanner and dive table calculator using the [DCIEM diving algorithm](https://www.divegearexpress.com/amfile/file/download/file/143/product/8927/). The package composes of a series of functions to calculate air decompression bottom times, surface intervals, and repetitive diving, and includes adjusted calculations for Nitrox up to EANx 40. The diveplanner allows for dynamic calculations of repetitive groups based on datetime of dives and acts as a multi-day logbook.
 
