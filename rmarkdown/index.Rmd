@@ -8,7 +8,7 @@ date: "2023-12-22"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-<img src="images/dciemhex.png" style="float: right;" width="181"/>
+<img src="https://marine-ecologist.github.io/DCIEM/images/dciemhex.png" style="float: right;" width="181"/>
 
 `DCIEM` is a "development" package that functions as a diveplanner and dive table calculator using the [DCIEM diving algorithm](https://www.divegearexpress.com/amfile/file/download/file/143/product/8927/). The package composes of a series of functions to calculate air decompression bottom times, surface intervals, and repetitive diving, and includes adjusted calculations for Nitrox up to EANx 40. The diveplanner allows for dynamic calculations of repetitive groups based on datetime of dives and acts as a multi-day logbook.
 
@@ -16,7 +16,7 @@ The `DCIEM` algorithm is used under the Australian / New Zealand Diving Standard
 
 The `DCIEM` package was written to fill this gap and make dive planning more straight forward with less mistakes calculating tables on the fly. The Shiny app will be expanded at a future version to allow saving and multi-diver dive logs for use in field situations, and a stand alone app developed for use on phones/tablets to accurately plan and log dives.
 
-![](images/app.png)
+![](https://raw.githubusercontent.com/marine-ecologist/DCIEM/refs/heads/main/rmarkdown/images/app.png)
 
 ### Installation
 
